@@ -12,7 +12,7 @@ from setuptools import setup, find_packages
 
 setup(
     name="eplus",
-    version="0.1",
+    version="1.0",
     description="ga Engine Plus",
     author="WIX",
 
