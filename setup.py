@@ -13,7 +13,7 @@ from setuptools import setup, find_packages
 setup(
     name="eplus",
     version="1.0",
-    description="ga Engine Plus",
+    description="Google App Engine plus",
     author="WIX",
 
     # packages=find_packages(),
@@ -21,4 +21,4 @@ setup(
     # install_requires=[],
 )
 
-# rm -rf dist build eplus.egg-info; python setup.py bdist_egg
+# python setup.py bdist_egg
