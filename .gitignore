@@ -2,3 +2,5 @@
 /var/
 *.pyc
 *.mo
+/eplus.egg-info/
+/build/
