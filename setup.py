@@ -23,6 +23,9 @@ setup(
         'Intended Audience :: Developers',
         'License :: OSI Approved :: MIT License',
     ],
+    #   3 - Alpha
+    #   4 - Beta
+    #   5 - Production/Stable
 
     # packages=find_packages(),
     packages=['eplus'],

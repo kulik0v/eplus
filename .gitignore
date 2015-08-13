@@ -4,3 +4,4 @@
 *.mo
 /eplus.egg-info/
 /build/
+/dist/
