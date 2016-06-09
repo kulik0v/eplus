@@ -16,6 +16,7 @@ setup(
     description='Google App Engine extensions',
     # long_description=long_description,
     url='https://github.com/kulik0v/eplus',
+    download_url='https://github.com/kulik0v/eplus/archive/master.zip',
     author='WIX',
     license='MIT',
     classifiers=[
@@ -34,10 +35,13 @@ setup(
     # To provide executable scripts, use entry points in preference to the
     # "scripts" keyword. Entry points provide cross-platform support and allow
     # pip to create the appropriate form of executable for the target platform.
-    # entry_points={
-    #     'console_scripts': [
-    #         'sample=sample:main',
-    #     ],
-    # },
+    entry_points={
+        'console_scripts': [
+            'app_shell=eplus.console_shell:main',
+        ],
+    },
 )
+
+# pip install -e .
+# pip install --user --upgrade .
 

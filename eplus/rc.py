@@ -5,7 +5,7 @@ import sys
 
 
 GAE_SDK_ROOT = os.environ.get('GAE_SDK_ROOT', '/opt/google_appengine')
-APP_YAML_FILE = 'app-local.yaml'
+APP_YAML_FILE = os.path.isfile('app-local.yaml') and 'app-local.yaml' or 'app.yaml'
 
 
 if 'google' in sys.modules:
@@ -135,7 +135,9 @@ apiproxy_stub_map.apiproxy.RegisterStub(
 def on_exit(self):
 
     try:
-        from google.appengine.tools.dev_appserver import TearDownStubs
+        # noinspection PyProtectedMember
+        from google.appengine.tools.api_server import _TearDownStubs as TearDownStubs
+        # from google.appengine.tools.dev_appserver import TearDownStubs
     except ImportError:
         from google.appengine.tools.old_dev_appserver import TearDownStubs
 
@@ -155,13 +157,13 @@ TerminalInteractiveShell.ask_exit = on_exit
 
 ######################
 
-import json
-import uuid
-import logging
-import urllib
-from conf import settings
+# import json
+# import uuid
+# import logging
+# import urllib
+# from conf import settings
 
-from google.appengine.api import urlfetch
+# from google.appengine.api import urlfetch
 
 
 # from services.models import *
@@ -169,7 +171,7 @@ from google.appengine.api import urlfetch
 
 
 
-logging.getLogger().setLevel(logging.DEBUG)
+# logging.getLogger().setLevel(logging.DEBUG)
 
 
 # import logging
