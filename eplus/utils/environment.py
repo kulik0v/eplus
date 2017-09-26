@@ -30,20 +30,6 @@ def init(sdk_root=None):
 
 # noinspection PyPackageRequirements
 def setup_remote():
-    # import yaml
-    # from google.appengine.api import appinfo
-    # from google.appengine.ext.remote_api import remote_api_stub
-    #
-    # with open(APP_YAML_FILE, 'r') as f:
-    #     app_yaml = yaml.load(f)
-    #
-    #     app_environ = app_yaml.get(appinfo.ENV_VARIABLES)
-    #     if app_environ:
-    #         os.environ.update(app_environ)
-    #
-    # host = '%s.appspot.com' % app_yaml.get(appinfo.APPLICATION)
-    # os.environ['HTTP_HOST'] = host
-
     from google.appengine.tools.devappserver2.devappserver2 import PARSER
     options = PARSER.parse_args([APP_YAML_FILE, ])
 
@@ -60,19 +46,6 @@ def setup_remote():
 
 # noinspection PyPackageRequirements,PyProtectedMember
 def setup_local():
-    # import yaml
-    # from google.appengine.api import appinfo
-    # from google.appengine.api import apiproxy_stub_map
-    # with open(APP_YAML_LOCAL_FILE, 'r') as f:
-    #     app_yaml = yaml.load(f)
-    #
-    #     app_environ = app_yaml.get(appinfo.ENV_VARIABLES)
-    #     if app_environ:
-    #         os.environ.update(app_environ)
-    #
-    # app_id = 'dev~%s' % app_yaml.get(appinfo.APPLICATION)
-
-
     from google.appengine.tools.devappserver2.devappserver2 import PARSER
     options = PARSER.parse_args([APP_YAML_LOCAL_FILE, ])
 
@@ -85,14 +58,9 @@ def setup_local():
     os.environ['SERVER_NAME'] = 'localhost'
     os.environ['SERVER_PORT'] = '8080'
 
-
     from google.appengine.tools.devappserver2.devappserver2 import _get_storage_path
-    # storage_path = _get_storage_path(None, app_id)
     storage_path = _get_storage_path(options.storage_path, configuration.app_id)
-
     setup_stubs(storage_path, options, configuration)
-    # from google.appengine.tools.devappserver2.devappserver2 import DevelopmentServer
-    # DevelopmentServer._create_api_server(None, storage_path, options, configuration)
 
 
 # noinspection PyPackageRequirements
@@ -145,13 +113,3 @@ def setup_stubs(storage_path, options, configuration):
 def tear_down_local():
     from google.appengine.tools.devappserver2.api_server import cleanup_stubs
     cleanup_stubs()
-
-    # try:
-    #     # noinspection PyProtectedMember,PyPep8Naming
-    #     from google.appengine.tools.api_server import _TearDownStubs as TearDownStubs
-    #     # from google.appengine.tools.dev_appserver import TearDownStubs
-    # except ImportError:
-    #     # noinspection PyPep8Naming,PyUnresolvedReferences
-    #     from google.appengine.tools.old_dev_appserver import TearDownStubs
-    #
-    # TearDownStubs()
