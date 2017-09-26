@@ -12,7 +12,7 @@ from setuptools import setup, find_packages
 
 setup(
     name='eplus',
-    version='1.0.0',
+    version='1.1.0',
     description='Google App Engine extensions',
     # long_description=long_description,
     url='https://github.com/kulik0v/eplus',
@@ -20,7 +20,7 @@ setup(
     author='WIX',
     license='MIT',
     classifiers=[
-        'Development Status :: 3 - Alpha',
+        'Development Status :: 4 - Beta',
         'Intended Audience :: Developers',
         'License :: OSI Approved :: MIT License',
     ],
@@ -37,11 +37,13 @@ setup(
     # pip to create the appropriate form of executable for the target platform.
     entry_points={
         'console_scripts': [
-            'app_shell=eplus.console_shell:main',
+            'app_shell=eplus.shell:shell_local',
+            'app_remote_shell=eplus.shell:shell_remote',
         ],
     },
 )
 
-# pip install -e .
+# pip install --editable .
+# pip install --user --editable .
 # pip install --user --upgrade .
 
