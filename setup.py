@@ -12,7 +12,7 @@ from setuptools import setup, find_packages
 
 setup(
     name='eplus',
-    version='1.1.1',
+    version='1.1.2',
     description='Google App Engine extensions',
     # long_description=long_description,
     url='https://github.com/kulik0v/eplus',
