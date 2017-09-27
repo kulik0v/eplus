@@ -1,7 +1,7 @@
 # -*- encoding: UTF-8 -*-
 
-from .utils.find_embed import embed
-from .utils.environment import init, setup_local, tear_down_local, setup_remote
+from .embed import embed
+from .environment import init, setup_local, tear_down_local, setup_remote
 
 
 def shell_local():
