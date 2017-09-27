@@ -28,8 +28,8 @@ setup(
     #   4 - Beta
     #   5 - Production/Stable
 
-    # packages=find_packages(),
-    packages=['eplus'],
+    packages=find_packages(),
+    # packages=['eplus'],
     # install_requires=[],
 
     # To provide executable scripts, use entry points in preference to the
