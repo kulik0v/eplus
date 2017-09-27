@@ -3,19 +3,18 @@
 import os
 import sys
 
-GAE_SDK_ROOT = os.environ.get('GAE_SDK_ROOT', '/opt/google_appengine')
+from .utils import find_sdk
+
 APP_YAML_LOCAL_FILE = os.path.isfile('app-local.yaml') and 'app-local.yaml' or 'app.yaml'
 APP_YAML_FILE = 'app.yaml'
 
 
 # noinspection PyProtectedMember
-def init(sdk_root=None):
-    if not sdk_root:
-        sdk_root = os.environ.get('GAE_SDK_ROOT', '/opt/google_appengine')
-
+def init():
     if 'google' in sys.modules:
         del sys.modules['google']
 
+    sdk_root = find_sdk()
     if sdk_root not in sys.path:
         sys.path.append(sdk_root)
 
@@ -58,8 +57,12 @@ def setup_local():
     os.environ['SERVER_NAME'] = 'localhost'
     os.environ['SERVER_PORT'] = '8080'
 
-    from google.appengine.tools.devappserver2.devappserver2 import _get_storage_path
-    storage_path = _get_storage_path(options.storage_path, configuration.app_id)
+    try:
+        from google.appengine.tools.devappserver2.api_server import get_storage_path
+    except ImportError:
+        from google.appengine.tools.devappserver2.devappserver2 import _get_storage_path as get_storage_path
+
+    storage_path = get_storage_path(options.storage_path, configuration.app_id)
     setup_stubs(storage_path, options, configuration)
 
 
