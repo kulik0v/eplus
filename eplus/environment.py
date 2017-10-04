@@ -24,20 +24,26 @@ def init():
     from dev_appserver import _PATHS
     sys.path[1:1] = _PATHS.v2_extra_paths
     sys.path[1:1] = _PATHS._script_to_paths.get('dev_appserver.py')
-    sys.path.append('.')
+    sys.path.append(os.path.abspath('.'))
 
 
 # noinspection PyPackageRequirements
 def setup_remote():
     from google.appengine.tools.devappserver2.devappserver2 import PARSER
-    options = PARSER.parse_args([APP_YAML_FILE, ])
+
+    args = [APP_YAML_FILE, ]
+    args.extend(sys.argv[1:])
+
+    options = PARSER.parse_args(args)
 
     from google.appengine.tools.devappserver2.devappserver2 import application_configuration
     configuration = application_configuration.ApplicationConfiguration(options.config_paths, options.app_id)
 
     host = '%s.appspot.com' % configuration.modules[0].application_external_name
+
     os.environ['HTTP_HOST'] = host
     os.environ['APPLICATION_ID'] = configuration.app_id
+    os.environ['SERVER_SOFTWARE'] = 'Development (remote_api)/1.0'
 
     from google.appengine.ext.remote_api import remote_api_stub
     remote_api_stub.ConfigureRemoteApiForOAuth(host, '/_ah/remote_api')
