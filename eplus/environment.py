@@ -26,6 +26,11 @@ def init():
     sys.path[1:1] = _PATHS._script_to_paths.get('dev_appserver.py')
     sys.path.append(os.path.abspath('.'))
 
+    try:
+        import appengine_config
+    except ImportError:
+        pass
+
 
 # noinspection PyPackageRequirements
 def setup_remote():
