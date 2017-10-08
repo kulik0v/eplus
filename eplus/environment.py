@@ -38,14 +38,17 @@ def setup_remote():
 
     from google.appengine.tools.devappserver2.devappserver2 import application_configuration
     configuration = application_configuration.ApplicationConfiguration(options.config_paths, options.app_id)
+    mc = configuration.modules[0]
 
-    host = '%s.appspot.com' % configuration.modules[0].application_external_name
+    host = '-dot-'.join((mc.major_version, mc.module_name, mc.application_external_name)) + '.appspot.com'
 
-    os.environ['HTTP_HOST'] = host
-    os.environ['APPLICATION_ID'] = configuration.app_id
-    os.environ['SERVER_SOFTWARE'] = 'Development (remote_api)/1.0'
+    if 'HTTP_HOST' not in os.environ:
+        os.environ['HTTP_HOST'] = host
+        os.environ['APPLICATION_ID'] = configuration.app_id
 
     from google.appengine.ext.remote_api import remote_api_stub
+
+    os.environ['SERVER_SOFTWARE'] = 'Development (remote_api)/1.0'
     remote_api_stub.ConfigureRemoteApiForOAuth(host, '/_ah/remote_api')
 
 
