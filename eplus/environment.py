@@ -2,6 +2,7 @@
 
 import os
 import sys
+import re
 
 from .utils import find_sdk
 
@@ -36,7 +37,10 @@ def init():
 def setup_remote():
     from google.appengine.tools.devappserver2.devappserver2 import PARSER
 
-    args = [APP_YAML_FILE, ]
+    if len(sys.argv) >= 2 and re.match('.*\.yaml$', sys.argv[1]):
+        args = []
+    else:
+        args = [APP_YAML_FILE, ]
     args.extend(sys.argv[1:])
 
     options = PARSER.parse_args(args)
