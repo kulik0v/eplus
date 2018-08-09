@@ -6,8 +6,8 @@ import re
 
 from .utils import find_sdk
 
+APP_YAML_FILE = os.path.isfile('app-remote.yaml') and 'app-remote.yaml' or 'app.yaml'
 APP_YAML_LOCAL_FILE = os.path.isfile('app-local.yaml') and 'app-local.yaml' or 'app.yaml'
-APP_YAML_FILE = 'app.yaml'
 
 
 # noinspection PyProtectedMember
@@ -35,14 +35,16 @@ def init():
 
 # noinspection PyPackageRequirements
 def setup_remote():
+
+    args = sys.argv[1:]
+
+    # if len(args) < 1 or not args[-1].endswith('.yaml'):
+    #     args.append(APP_YAML_FILE)
+
+    if len(args) < 1 or not args[0].endswith('.yaml'):
+        args.insert(0, APP_YAML_FILE)
+
     from google.appengine.tools.devappserver2.devappserver2 import PARSER
-
-    if len(sys.argv) >= 2 and re.match('.*\.yaml$', sys.argv[1]):
-        args = []
-    else:
-        args = [APP_YAML_FILE, ]
-    args.extend(sys.argv[1:])
-
     options = PARSER.parse_args(args)
 
     from google.appengine.tools.devappserver2.devappserver2 import application_configuration
