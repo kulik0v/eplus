@@ -72,6 +72,7 @@ def setup_local():
     configuration = application_configuration.ApplicationConfiguration(options.config_paths, options.app_id)
 
     # set the app ID to make stubs happy, esp. datastore
+    os.environ['HTTP_HOST'] = 'localhost'
     os.environ['APPLICATION_ID'] = configuration.app_id
     os.environ['AUTH_DOMAIN'] = 'localhost'
     os.environ['SERVER_NAME'] = 'localhost'
