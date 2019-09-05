@@ -78,4 +78,21 @@ def find_sdk():
             pass
 
 
+def find_gcloud_lib():
+
+    # find by gcloud
+    gcloud_path = which('gcloud')
+    if gcloud_path:
+        gcloud_path = os.path.realpath(gcloud_path)
+
+        check_path = os.path.join(
+            os.path.dirname(gcloud_path),
+            '..',
+            'lib',
+        )
+        try:
+            os.stat(check_path)
+            return check_path
+        except OSError:
+            pass
 

@@ -3,8 +3,9 @@
 import os
 import sys
 import re
+import yaml
 
-from .utils import find_sdk
+from .utils import find_sdk, find_gcloud_lib
 
 APP_YAML_FILE = os.path.isfile('app-remote.yaml') and 'app-remote.yaml' or 'app.yaml'
 APP_YAML_LOCAL_FILE = os.path.isfile('app-local.yaml') and 'app-local.yaml' or 'app.yaml'
@@ -33,9 +34,15 @@ def init():
         pass
 
 
+def init_lib():
+    lib_root = find_gcloud_lib()
+    if lib_root not in sys.path:
+        sys.path.append(lib_root)
+
+
+
 # noinspection PyPackageRequirements
 def setup_remote():
-
     args = sys.argv[1:]
 
     # if len(args) < 1 or not args[-1].endswith('.yaml'):
@@ -47,8 +54,20 @@ def setup_remote():
     from google.appengine.tools.devappserver2.devappserver2 import PARSER
     options = PARSER.parse_args(args)
 
+    # which is:
+    # PARSER = cli_parser.create_command_line_parser(cli_parser.DEV_APPSERVER_CONFIGURATION)
+
+    yaml_file = options.config_paths[0]
+    with open(yaml_file, 'r') as fh:
+        # except yaml.YAMLError as exc:
+        #     print(exc)
+        yaml_data = yaml.safe_load(fh)
+        env_extra = yaml_data.get('env_variables', {})
+        os.environ.update(env_extra)
+
     from google.appengine.tools.devappserver2.devappserver2 import application_configuration
     configuration = application_configuration.ApplicationConfiguration(options.config_paths, options.app_id)
+
     mc = configuration.modules[0]
 
     host = '-dot-'.join((mc.major_version, mc.module_name, mc.application_external_name)) + '.appspot.com'
@@ -57,9 +76,9 @@ def setup_remote():
         os.environ['HTTP_HOST'] = host
         os.environ['APPLICATION_ID'] = configuration.app_id
 
-    from google.appengine.ext.remote_api import remote_api_stub
-
     os.environ['SERVER_SOFTWARE'] = 'Development (remote_api)/1.0'
+
+    from google.appengine.ext.remote_api import remote_api_stub
     remote_api_stub.ConfigureRemoteApiForOAuth(host, '/_ah/remote_api')
 
 
@@ -97,7 +116,6 @@ def setup_stubs(storage_path, options, configuration):
     from google.appengine.api import apiproxy_stub_map
     apiproxy_stub_map.apiproxy = apiproxy_stub_map.APIProxyStubMap()
 
-
     # DB
     from google.appengine.datastore import datastore_sqlite_stub
     apiproxy_stub_map.apiproxy.RegisterStub('datastore_v3', datastore_sqlite_stub.DatastoreSqliteStub(configuration.app_id, datastore_path))
@@ -111,7 +129,6 @@ def setup_stubs(storage_path, options, configuration):
 
     from google.appengine.api.blobstore import blobstore_stub
     apiproxy_stub_map.apiproxy.RegisterStub('blobstore', blobstore_stub.BlobstoreServiceStub(blob_storage))
-
 
     from google.appengine.api.app_identity import app_identity_stub
     apiproxy_stub_map.apiproxy.RegisterStub('app_identity_service', app_identity_stub.AppIdentityServiceStub())

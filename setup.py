@@ -12,7 +12,7 @@ from setuptools import setup, find_packages
 
 setup(
     name='eplus',
-    version='1.1.9',
+    version='1.2.1',
     description='Google App Engine extensions',
     # long_description=long_description,
     url='https://github.com/kulik0v/eplus',
@@ -37,13 +37,9 @@ setup(
     # pip to create the appropriate form of executable for the target platform.
     entry_points={
         'console_scripts': [
-            'app_shell=eplus.shell:shell_local',
+            'app_local_shell=eplus.shell:shell_local',
             'app_remote_shell=eplus.shell:shell_remote',
+            'appcfg_update=eplus.shell:appcfg_update',
         ],
     },
 )
-
-# pip install --editable .
-# pip install --user --editable .
-# pip install --user --upgrade .
-
