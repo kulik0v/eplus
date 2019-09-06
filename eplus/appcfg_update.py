@@ -36,7 +36,7 @@ def simulate_legacy_update():
 
     dst_yaml = args.yaml_file + SFX
 
-    if os.stat(dst_yaml):
+    if not os.stat(dst_yaml):
         raise Exception('Temporary yaml ({}) already exist'.format(dst_yaml))
 
     with open(dst_yaml, 'w') as fh:
