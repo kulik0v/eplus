@@ -1,4 +1,5 @@
 # -*- encoding: UTF-8 -*-
+import os
 import sys
 import argparse
 import yaml
@@ -22,7 +23,6 @@ def simulate_legacy_update():
     # print('f', args.yaml_file)
     # print('u', extra_args)
 
-    yaml_data = {}
     with open(args.yaml_file, 'r') as fh:
         # except yaml.YAMLError as exc:
         #     print(exc)
@@ -35,6 +35,10 @@ def simulate_legacy_update():
         yaml_data['service'] = yaml_data.pop('module')
 
     dst_yaml = args.yaml_file + SFX
+
+    if os.stat(dst_yaml):
+        raise Exception('Temporary yaml ({}) already exist'.format(dst_yaml))
+
     with open(dst_yaml, 'w') as fh:
         yaml.safe_dump(yaml_data, fh)
 
@@ -54,10 +58,12 @@ def simulate_legacy_update():
 
     new_args.append(dst_yaml)
     new_args.extend(extra_args)
-
     # print new_args
 
     sys.argv = new_args
+    # noinspection PyUnresolvedReferences,PyPackageRequirements
     from gcloud import main
     main()
+
+    os.unlink(dst_yaml)
 
