@@ -7,6 +7,19 @@ import yaml
 SFX = '.deploy.yaml'
 
 
+class ExitException(Exception):
+    pass
+
+
+def _un_exit(*args):
+    raise ExitException(*args)
+
+
+sys.exit = _un_exit
+
+
+
+
 def simulate_legacy_update():
     parser = argparse.ArgumentParser(
         description='Deploy',
@@ -35,7 +48,7 @@ def simulate_legacy_update():
 
     dst_yaml = args.yaml_file + SFX
 
-    if not os.stat(dst_yaml):
+    if os.path.isfile(dst_yaml):
         raise Exception('Temporary yaml ({}) already exist'.format(dst_yaml))
 
     with open(dst_yaml, 'w+') as fh:
@@ -59,7 +72,11 @@ def simulate_legacy_update():
     sys.argv = new_args
     # noinspection PyUnresolvedReferences,PyPackageRequirements
     from gcloud import main
-    main()
+
+    try:
+        main()
+    except ExitException:
+        pass
 
     os.unlink(dst_yaml)
 
