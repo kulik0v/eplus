@@ -18,7 +18,6 @@ def simulate_legacy_update():
     # parser.add_argument('-a', '--ask', action='store_true', help='dont be quiet.')
 
     args, extra_args = parser.parse_known_args()
-
     # print('a', args)
     # print('f', args.yaml_file)
     # print('u', extra_args)
@@ -39,16 +38,13 @@ def simulate_legacy_update():
     if not os.stat(dst_yaml):
         raise Exception('Temporary yaml ({}) already exist'.format(dst_yaml))
 
-    with open(dst_yaml, 'w') as fh:
+    with open(dst_yaml, 'w+') as fh:
         yaml.safe_dump(yaml_data, fh)
 
 
     new_args = ['gcloud', 'app', 'deploy']
     if not args.promote:
         new_args.append('--no-promote')
-
-    # if not args.ask:
-    #     new_args.append('--quiet')
 
     if application:
         new_args.append('--project={}'.format(application))
