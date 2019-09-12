@@ -1,0 +1,23 @@
+application: move_it_to_args
+module: become_a_service
+
+runtime: python27
+api_version: 1
+threadsafe: true
+
+
+handlers:
+- url: /.*
+  script: main.app
+
+
+builtins:
+- remote_api: on
+- deferred: on
+
+
+libraries:
+- name: webob
+  version: latest
+- name: webapp2
+  version: latest
