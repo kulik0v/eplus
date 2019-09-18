@@ -13,6 +13,7 @@ def simulate_legacy_update():
     )
     parser.add_argument('yaml_file', metavar='YAML', help='app.yaml file')
     parser.add_argument('-p', '--promote', action='store_true', help='migrate traffic.')
+    parser.add_argument('-ek', '--keepyaml', action='store_true', help='keep modified yaml.')
     options, extra_args = parser.parse_known_args()
 
     with open(options.yaml_file, 'r') as fh:
@@ -30,9 +31,13 @@ def simulate_legacy_update():
         yaml.safe_dump(yaml_data, fh)
 
     args = create_args_list(options, target_yaml, application, version, extra_args)
+
+    print('RUNNING: ' + ' '.join(args))
     run_main(args)
 
-    os.unlink(target_yaml)
+
+    if not options.keepyaml:
+        os.unlink(target_yaml)
 
 
 def get_target_yaml(source_yaml):
