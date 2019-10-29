@@ -2,7 +2,6 @@
 
 import os
 import sys
-import re
 import yaml
 
 from .utils import find_sdk, find_gcloud_lib
@@ -40,7 +39,6 @@ def init_lib():
         sys.path.append(lib_root)
 
 
-
 # noinspection PyPackageRequirements
 def setup_remote():
     args = sys.argv[1:]
@@ -59,12 +57,11 @@ def setup_remote():
 
     yaml_file = options.config_paths[0]
     with open(yaml_file, 'r') as fh:
-        # except yaml.YAMLError as exc:
-        #     print(exc)
         yaml_data = yaml.safe_load(fh)
         env_extra = yaml_data.get('env_variables', {})
         os.environ.update(env_extra)
 
+    # noinspection PyUnresolvedReferences
     from google.appengine.tools.devappserver2.devappserver2 import application_configuration
     configuration = application_configuration.ApplicationConfiguration(options.config_paths, options.app_id)
 
@@ -76,10 +73,12 @@ def setup_remote():
         os.environ['HTTP_HOST'] = host
         os.environ['APPLICATION_ID'] = configuration.app_id
 
+    s_app_id = 's~%s' % mc.application_external_name  # s~PROJECT_ID format
+
     os.environ['SERVER_SOFTWARE'] = 'Development (remote_api)/1.0'
 
     from google.appengine.ext.remote_api import remote_api_stub
-    remote_api_stub.ConfigureRemoteApiForOAuth(host, '/_ah/remote_api')
+    remote_api_stub.ConfigureRemoteApiForOAuth(host, '/_ah/remote_api', app_id=s_app_id)
 
 
 # noinspection PyPackageRequirements,PyProtectedMember
@@ -87,6 +86,7 @@ def setup_local():
     from google.appengine.tools.devappserver2.devappserver2 import PARSER
     options = PARSER.parse_args([APP_YAML_LOCAL_FILE, ])
 
+    # noinspection PyUnresolvedReferences
     from google.appengine.tools.devappserver2.devappserver2 import application_configuration
     configuration = application_configuration.ApplicationConfiguration(options.config_paths, options.app_id)
 
@@ -100,6 +100,7 @@ def setup_local():
     try:
         from google.appengine.tools.devappserver2.api_server import get_storage_path
     except ImportError:
+        # noinspection PyUnresolvedReferences
         from google.appengine.tools.devappserver2.devappserver2 import _get_storage_path as get_storage_path
 
     storage_path = get_storage_path(options.storage_path, configuration.app_id)
@@ -152,5 +153,6 @@ def setup_stubs(storage_path, options, configuration):
 
 # noinspection PyPackageRequirements
 def tear_down_local():
+    # noinspection PyUnresolvedReferences
     from google.appengine.tools.devappserver2.api_server import cleanup_stubs
     cleanup_stubs()
