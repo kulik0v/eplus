@@ -48,12 +48,12 @@ def update_options(options, yaml_data):
     """
 
     application = yaml_data.pop('application', None)
-    if not options.project:
+    if not options.project and application:
         options.project = application
 
     version = yaml_data.pop('version', None)
-    if not options.version:
-        options.project = version
+    if not options.version and version:
+        options.version = version
 
     if 'module' in yaml_data:
         yaml_data['service'] = yaml_data.pop('module')
