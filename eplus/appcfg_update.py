@@ -12,32 +12,51 @@ def simulate_legacy_update():
         formatter_class=argparse.ArgumentDefaultsHelpFormatter,
     )
     parser.add_argument('yaml_file', metavar='YAML', help='app.yaml file')
-    parser.add_argument('-p', '--promote', action='store_true', help='migrate traffic.')
-    parser.add_argument('-ek', '--keepyaml', action='store_true', help='keep modified yaml.')
+    parser.add_argument('-ep', '--promote', action='store_true', help='Migrate traffic.')
+    parser.add_argument('-ek', '--keepyaml', action='store_true', help='Keep modified yaml.')
+
+    parser.add_argument('--version', action='store', help='The version of the app.')
+    parser.add_argument('--project', action='store', help='The Google Cloud Platform project name to use for this invocation.')
+
     options, extra_args = parser.parse_known_args()
 
-    with open(options.yaml_file, 'r') as fh:
+    source_yaml = options.yaml_file
+
+    with open(source_yaml, 'r') as fh:
         yaml_data = yaml.safe_load(fh)
 
-    application = yaml_data.pop('application', None)
-    version = yaml_data.pop('version', None)
+    update_options(options, yaml_data)
 
-    if 'module' in yaml_data:
-        yaml_data['service'] = yaml_data.pop('module')
-
-    target_yaml = get_unniq_target_yaml(options.yaml_file)
+    target_yaml = get_unniq_target_yaml(source_yaml)
 
     with open(target_yaml, 'w+') as fh:
         yaml.safe_dump(yaml_data, fh)
 
-    args = create_args_list(options, target_yaml, application, version, extra_args)
+    args = create_args_list(options, target_yaml, extra_args)
 
     print('RUNNING: ' + ' '.join(args))
     run_main(args)
 
-
     if not options.keepyaml:
         os.unlink(target_yaml)
+
+
+def update_options(options, yaml_data):
+    """
+    :param options: argparse.Namespace
+    :param yaml_data: object
+    """
+
+    application = yaml_data.pop('application', None)
+    if not options.project:
+        options.project = application
+
+    version = yaml_data.pop('version', None)
+    if not options.version:
+        options.project = version
+
+    if 'module' in yaml_data:
+        yaml_data['service'] = yaml_data.pop('module')
 
 
 def get_target_yaml(source_yaml):
@@ -68,12 +87,10 @@ def get_unniq_target_yaml(source_yaml):
     return target_yaml
 
 
-def create_args_list(options, target_yaml, application, version, extra_args):
+def create_args_list(options, target_yaml, extra_args):
     """
-    :type options: object
+    :param options: argparse.Namespace
     :param target_yaml: object
-    :param application: str
-    :param version: str
     :param extra_args: list
     :return: list
     """
@@ -82,11 +99,11 @@ def create_args_list(options, target_yaml, application, version, extra_args):
     if not options.promote:
         new_args.append('--no-promote')
 
-    if application:
-        new_args.append('--project={}'.format(application))
+    if options.project:
+        new_args.append('--project={}'.format(options.project))
 
-    if version:
-        new_args.append('--version={}'.format(version))
+    if options.version:
+        new_args.append('--version={}'.format(options.version))
 
     new_args.append(target_yaml)
     new_args.extend(extra_args)
